@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>使用 layDate 独立版</title>
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+
+  <style>
+  body{padding: 20px;}
+
+  .date-bg{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(0,0,0,.5);
+  }
+  .date-layer{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+  .layer-head{
+    background: #fff;
+    font-size: 14px;
+    color: #999;
+  }
+  .w-date,.layer-ok{
+    position: relative;
+    color: #333;
+    padding: 8px;
+    margin: 0 10px;
+    bottom: -1px;
+    display: inline-block; 
+    z-index: 1;
+    border-bottom: 2px solid salmon;
+  }
+  .layer-ok{
+    float: right;
+    color: salmon;
+    border-bottom: none;
+  }
+  #t-time{
+    display: flex;
+    color: #999;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    background: #fff;
+  }
+  .c3{
+    color: #333;
+  }
+  #date table,#date>div,.layui-laydate-main{
+    width: 100%!important
+  }
+  .layui-laydate-footer{
+    display: none;
+  }
+  </style>
+</head>
+<body>
+<input type="text" class="demo-input" placeholder="请选择日期" id="test1">
+
+<!-- 插件 -->
+<div class='date-bg'  style="display: none">
+  <div class="date-layer">
+    <div class="layer-head">
+      <span class="w-date"></span>
+      <span class="w-time">上午</span>
+      <span class="layer-ok">确定</span>
+    </div>
+    <div id="date"></div>
+    <div id="t-time" style="display: none">
+      <div class="c3">上午</div>
+      <div>下午</div>
+    </div>
+  </div>
+</div>
+<!-- end -->
+<script src="http://www.jq22.com/jquery/jquery-2.1.1.js"></script>
+<script src="laydate/laydate.js"></script> <!-- 改成你的路径 -->
+<script>
+// 启动插件
+$('#test1').on('click',function(){
+    $('.date-bg').show();
+    $('.w-date').trigger('click')
+})
+;(function($, laydate){
+  // 插件事件
+  $('.date-bg').on('click',function(){
+    $('.date-bg').hide();
+  })
+  .on('click','.date-layer',function(){
+    return false;
+  })
+  .on('click','.w-date', function(){
+    $('#date').show()
+    $('#t-time').hide()
+  })
+  .on('click', '#t-time div', function(){
+    $(this).addClass('c3').siblings('div').removeClass('c3');
+    $('.w-time').text($(this).text())
+  })
+  .on('click','.layer-ok', function(){
+    $('.date-bg').hide();
+    var data = $('.w-date').text() + $('.w-time').text();
+    $('#test1').val(data)  // 返回参数
+    console.log(data)
+  })
+
+  var now = new Date();
+  var time = now.getFullYear() + "-" +((now.getMonth()+1)<10?"0":"")+(now.getMonth()+1)+"-"+(now.getDate()<10?"0":"")+now.getDate();
+  $('.w-date').html(time);
+  //执行一个laydate实例
+  laydate.render({
+    elem: '#date'
+    ,position: 'static'
+    ,change: function(value, date){ //监听日期被切换
+      $('#t-time').css('height', $('#date').height() + 'px').show()
+      $('#date').hide()
+      lay('.w-date').html(value);
+    }
+  });
+})(jQuery, laydate)
+</script>
+</body>
+</html>
